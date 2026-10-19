@@ -1,0 +1,2567 @@
+/* ============================================
+BASE.CSS
+Variables globales, reset y estilos del <body>
+   ============================================ */
+
+:root {
+    /* Colores de marca */
+    --color-azul-gamer: #60a5fa;
+    --color-azul-principal: #2563eb;
+    --color-azul-hover: #1d4ed8;
+    --color-azul-oscuro: #1e3a8a;
+
+    /* Neutros / superficies */
+    --color-fondo: #f3f4f6;
+    --color-texto: #1f2937;
+    --color-texto-suave: #374151;
+    --color-texto-gris: #6b7280;
+    --color-borde: #e5e7eb;
+    --color-borde-input: #d1d5db;
+    --color-fondo-input: #f9fafb;
+
+    /* Header / footer (dark) */
+    --color-dark: #111827;
+    --color-dark-texto: #d1d5db;
+    --color-dark-borde: #1f2937;
+    --color-dark-texto-suave: #9ca3af;
+
+    /* Estados */
+    --color-exito: #16a34a;
+    --color-error: #ef4444;
+    --color-advertencia: #f59e0b;
+
+    /* Tipografía */
+    --fuente-principal: 'Inter', system-ui, sans-serif;
+}
+
+/* RESET GENERAL */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--fuente-principal);
+}
+
+body {
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
+    line-height: 1.6;
+}
+
+main {
+    padding: 40px 5%;
+}
+
+.logo-img-perfil{
+    width: 100%;       
+    max-width: 350px; 
+    height: auto;
+}
+
+
+
+
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+/* RESET GENERAL */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', system-ui, sans-serif;
+}
+
+body {
+    background-color: #f3f4f6; /* Gris muy claro y moderno */
+    color: #1f2937;
+    line-height: 1.6;
+}
+
+/* CABECERA Y NAVEGACIÓN (Estilo Dark) */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 5%;
+    background-color: #111827;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+header .logo h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #60a5fa; /* Azul gamer */
+    letter-spacing: -0.5px;
+}
+
+nav .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+}
+
+nav .nav-links a {
+    text-decoration: none;
+    color: #d1d5db;
+    font-weight: 600;
+    font-size: 15px;
+    transition: color 0.3s ease;
+}
+
+nav .nav-links a.active, nav .nav-links a:hover {
+    color: #60a5fa;
+}
+
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 14px;
+}
+
+.user-actions a {
+    text-decoration: none;
+    color: #d1d5db;
+    transition: color 0.3s ease;
+}
+
+.user-actions a:hover {
+    color: white;
+}
+
+.cart-icon {
+    background: #2563eb;
+    padding: 8px 16px;
+    border-radius: 20px;
+    color: white !important;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background 0.3s ease;
+}
+
+.cart-icon:hover {
+    background: #1d4ed8;
+}
+
+/* BANNER PRINCIPAL (HERO) */
+main {
+    padding: 40px 5%;
+}
+
+.hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    color: white;
+    padding: 60px;
+    border-radius: 16px;
+    margin-bottom: 50px;
+    box-shadow: 0 15px 30px rgba(37, 99, 235, 0.2);
+}
+
+.hero-text {
+    width: 55%;
+}
+
+.hero-text h2 {
+    font-size: 42px;
+    margin-bottom: 15px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.hero-text p {
+    font-size: 18px;
+    margin-bottom: 30px;
+    color: #bfdbfe;
+}
+
+.hero-image .placeholder-img {
+    width: 350px;
+    height: 220px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px dashed rgba(255, 255, 255, 0.4);
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 18px;
+    backdrop-filter: blur(5px);
+}
+
+/* GRID Y TARJETAS DE JUEGOS */
+.grid-productos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.card-producto {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.03);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-producto:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+}
+
+.card-producto img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.card-producto h4 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #111827;
+}
+
+.card-producto .plataforma {
+    font-size: 12px;
+    background-color: #e0f2fe;
+    color: #0369a1;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 12px;
+}
+
+.card-producto .precio {
+    font-size: 22px;
+    font-weight: 800;
+    color: #16a34a; /* Verde precio */
+    margin-bottom: 20px;
+}
+
+/* BOTONES GLOBALES */
+.btn-primary, .btn-submit, .btn-pagar {
+    display: inline-block;
+    width: 100%;
+    padding: 12px 20px;
+    background-color: #2563eb;
+    color: #ffffff;
+    border: none;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover, .btn-submit:hover, .btn-pagar:hover {
+    background-color: #1d4ed8;
+}
+
+/* FORMULARIOS (LOGIN, REGISTRO, ADMIN) */
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 0;
+}
+
+.form-box {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    padding: 40px;
+    width: 100%;
+    max-width: 550px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.form-header h2 {
+    color: #2563eb;
+    margin-bottom: 5px;
+}
+
+.form-header h3 {
+    color: #6b7280;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #374151;
+}
+
+.form-group input, .form-group select, .form-group textarea {
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 15px;
+    background-color: #f9fafb;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.error-msg {
+    color: #ef4444;
+    font-size: 12px;
+    margin-top: 5px;
+    font-weight: 600;
+    min-height: 18px;
+}
+
+/* CARRITO DE COMPRAS */
+.cart-layout {
+    display: flex;
+    gap: 40px;
+    margin-top: 30px;
+}
+
+.cart-items {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.item-carrito {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.item-carrito img {
+    width: 100px;
+    height: 75px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.info-item {
+    flex: 1;
+    margin-left: 20px;
+}
+
+.controles-cantidad {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f3f4f6;
+    padding: 5px;
+    border-radius: 8px;
+}
+
+.controles-cantidad button {
+    width: 30px;
+    height: 30px;
+    background: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-eliminar {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 22px;
+    margin-left: 20px;
+    transition: transform 0.2s;
+}
+
+.btn-eliminar:hover {
+    transform: scale(1.1);
+}
+
+.cart-summary {
+    flex: 1;
+    background: #fff;
+    padding: 30px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    height: fit-content;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.cart-summary h3 {
+    margin-bottom: 25px;
+    font-size: 24px;
+    border-bottom: 2px solid #f3f4f6;
+    padding-bottom: 15px;
+}
+
+/* TABLA ADMINISTRADOR */
+.table-responsive {
+    overflow-x: auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border: 1px solid #e5e7eb;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th, .admin-table td {
+    padding: 15px 20px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.admin-table th {
+    background-color: #f9fafb;
+    color: #374151;
+    font-weight: 700;
+}
+
+.btn-accion {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    color: #fff;
+}
+
+.btn-editar { background-color: #f59e0b; margin-right: 5px; }
+.btn-eliminar-admin { background-color: #ef4444; }
+
+/* FOOTER */
+footer {
+    background-color: #111827;
+    color: #9ca3af;
+    padding: 40px 5%;
+    margin-top: 60px;
+    border-top: 1px solid #1f2937;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.footer-logo {
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.footer-links a {
+    color: #9ca3af;
+    text-decoration: none;
+    margin: 0 10px;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: #60a5fa;
+}
+
+.footer-newsletter input {
+    padding: 10px;
+    border: none;
+    border-radius: 6px 0 0 6px;
+    outline: none;
+}
+
+.footer-newsletter button {
+    padding: 10px 20px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 0 6px 6px 0;
+    cursor: pointer;
+    font-weight: bold;
+}
+.logo-img {
+    height: 50px; /* Ajusta este valor según el tamaño que quieras */
+    width: auto;
+    display: block;
+}
+/* CARRUSEL DE IMÁGENES HERO */
+.carousel {
+    position: relative;
+    width: 380px;
+    height: 220px;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.carousel-slide {
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+.carousel-slide.active {
+    display: block;
+}
+
+.carousel-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* BOTONES DE NAVEGACIÓN */
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(17, 24, 39, 0.7);
+    color: #fff;
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+}
+
+.carousel-btn:hover {
+    background: #2563eb;
+}
+
+.carousel-btn.prev {
+    left: 10px;
+}
+
+.carousel-btn.next {
+    right: 10px;
+}
+
+/* PÁGINA DE DETALLE DE PRODUCTO */
+.detalle-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); 
+    gap: 50px;
+    background: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    align-items: center;
+}
+
+/* MARCO CONTENEDOR ESTÁNDAR (Misma caja para TODOS los productos) */
+.detalle-img-box,
+#contenedor-detalle-producto > div:first-child {
+    width: 100%;
+    height: 420px;             /* Altura fija idéntica para todos los recuadros */
+    display: flex;
+    justify-content: center;    /* Centra la imagen horizontalmente */
+    align-items: center;        /* Centra la imagen verticalmente */
+    background-color: #f8fafc;  /* Fondo neutro donde descansa la imagen */
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+}
+
+/* IMAGEN COMPLETA, CENTRADA Y SIN RECORTAR */
+.detalle-img-box img,
+#contenedor-detalle-producto img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;        /* Muestra la portada 100% completa sin recortarla */
+    display: block;
+    margin: 0 auto;
+    border-radius: 8px;
+}
+
+/* ===================================================
+   SECCIÓN QUIÉNES SOMOS - COLORES GAMERZONE
+   =================================================== */
+
+.quienes-somos-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px 20px 60px 20px;
+}
+
+/* Breadcrumbs (Miga de pan) */
+.breadcrumbs {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 12px;
+}
+
+.breadcrumbs a {
+    color: #2563eb; /* Azul GamerZone */
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.breadcrumbs a:hover {
+    color: #00e5ff; /* Cian GamerZone */
+    text-decoration: underline;
+}
+
+.breadcrumbs span {
+    color: #00e5ff; /* Cian GamerZone */
+    font-weight: 600;
+}
+
+/* Título de la página con acento Cian GamerZone */
+.page-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #111827; /* Oscuro GamerZone */
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+}
+
+.accent-bar {
+    color: #00e5ff; /* Cian GamerZone */
+    font-size: 32px;
+    font-weight: 900;
+}
+
+/* Banner panorámico */
+.quienes-banner {
+    width: 100%;
+    height: 240px;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 40px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    border: 1px solid #e5e7eb;
+}
+
+.quienes-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Subtítulo central GamerZone */
+.section-subtitle {
+    text-align: center;
+    font-size: 26px;
+    font-weight: 800;
+    color: #111827; /* Oscuro GamerZone */
+    margin-bottom: 40px;
+    text-transform: uppercase;
+}
+
+.hashtag {
+    color: #00e5ff; /* Cian GamerZone */
+    margin-right: 4px;
+}
+
+/* Layout de texto e imágenes */
+.quienes-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 50px;
+    align-items: center;
+}
+
+.quienes-text p {
+    color: #374151;
+    font-size: 15px;
+    line-height: 1.8;
+    margin-bottom: 20px;
+}
+
+/* Collage de imágenes con toque Cian GamerZone */
+.quienes-collage {
+    position: relative;
+    height: 340px;
+}
+
+.collage-card {
+    position: absolute;
+    background: #fff;
+    padding: 8px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 229, 255, 0.15); /* Resplandor suave Cian GamerZone */
+    border: 1px solid #e5e7eb;
+}
+
+.collage-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.img-main {
+    width: 280px;
+    height: 200px;
+    top: 0;
+    right: 20px;
+    z-index: 1;
+}
+
+.img-secondary {
+    width: 290px;
+    height: 190px;
+    bottom: 0;
+    left: 20px;
+    z-index: 2;
+}
+
+/* Responsivo para móviles */
+@media (max-width: 768px) {
+    .quienes-grid {
+        grid-template-columns: 1fr;
+    }
+    .quienes-collage {
+        height: 280px;
+    }
+}
+
+
+
+
+/* ============================================
+   HEADER.CSS
+   Cabecera, navegación, logo y acciones de usuario
+   ============================================ */
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 5%;
+    background-color: var(--color-dark);
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+/* LOGO: ICONO CIRCULAR + TEXTO GAMERZONE */
+header .logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;                  /* Espacio entre el circulo de la imagen y el texto */
+    text-decoration: none;
+}
+
+.logo-img {
+    width: 38px;                /* Ancho fijo para hacer un círculo perfecto */
+    height: 38px;               /* Alto fijo para hacer un círculo perfecto */
+    border-radius: 50%;         /* Redondea la imagen en círculo */
+    object-fit: cover;
+    display: block;
+    border: 2px solid var(--color-azul-gamer, #00e5ff); /* Borde sutil opcional con color cian */
+}
+
+.logo-text {
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;             /* Texto GamerZone blanco */
+    letter-spacing: -0.5px;
+}
+
+/* NAVEGACIÓN PRINCIPAL */
+nav .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+}
+
+nav .nav-links a {
+    text-decoration: none;
+    color: var(--color-dark-texto);
+    font-weight: 600;
+    font-size: 15px;
+    transition: color 0.3s ease;
+}
+
+nav .nav-links a.active,
+nav .nav-links a:hover {
+    color: var(--color-azul-gamer);
+}
+
+/* ACCIONES DE USUARIO Y CARRITO */
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 14px;
+}
+
+.user-actions a {
+    text-decoration: none;
+    color: var(--color-dark-texto);
+    transition: color 0.3s ease;
+}
+
+.user-actions a:hover {
+    color: white;
+}
+
+.cart-icon {
+    background: var(--color-azul-principal);
+    padding: 8px 16px;
+    border-radius: 20px;
+    color: white !important;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background 0.3s ease;
+}
+
+.cart-icon:hover {
+    background: var(--color-azul-hover);
+}
+
+
+
+
+/* ============================================
+BOTONES.CSS
+Botones reutilizables en todo el sitio
+   ============================================ */
+
+.btn-primary,
+.btn-submit,
+.btn-pagar {
+    display: inline-block;
+    width: 100%;
+    padding: 12px 20px;
+    background-color: var(--color-azul-principal);
+    color: #ffffff;
+    border: none;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover,
+.btn-submit:hover,
+.btn-pagar:hover {
+    background-color: var(--color-azul-hover);
+}
+
+
+
+
+/* ============================================
+HERO.CSS
+Banner principal de bienvenida (index.html)
+   ============================================ */
+
+.hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, var(--color-azul-oscuro) 0%, #3b82f6 100%);
+    color: white;
+    padding: 60px;
+    border-radius: 16px;
+    margin-bottom: 50px;
+    box-shadow: 0 15px 30px rgba(37, 99, 235, 0.2);
+}
+
+.hero-text {
+    width: 55%;
+}
+
+.hero-text h2 {
+    font-size: 42px;
+    margin-bottom: 15px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.hero-text p {
+    font-size: 18px;
+    margin-bottom: 30px;
+    color: #bfdbfe;
+}
+
+.hero-image .placeholder-img {
+    width: 350px;
+    height: 220px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px dashed rgba(255, 255, 255, 0.4);
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 18px;
+    backdrop-filter: blur(5px);
+}
+
+
+
+
+/* ============================================
+CARRUSEL.CSS
+============================================ */
+
+.carousel {
+    position: relative;
+    width: 380px;
+    height: 220px;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.carousel-slide {
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+.carousel-slide.active {
+    display: block;
+}
+
+.carousel-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(17, 24, 39, 0.7);
+    color: #fff;
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+}
+
+.carousel-btn:hover {
+    background: var(--color-azul-principal);
+}
+
+.carousel-btn.prev {
+    left: 10px;
+}
+
+.carousel-btn.next {
+    right: 10px;
+}
+
+
+
+
+
+/* ============================================
+PRODUCTOS.CSS
+Grid y tarjetas de juegos (index.html, productos.html)
+   ============================================ */
+
+.grid-productos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.card-producto {
+    background-color: #ffffff;
+    border: 1px solid var(--color-borde);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-producto:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-producto img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.card-producto h4 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: var(--color-dark);
+}
+
+.card-producto .plataforma {
+    font-size: 12px;
+    background-color: #e0f2fe;
+    color: #0369a1;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 12px;
+}
+
+.card-producto .precio {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--color-exito);
+    margin-bottom: 20px;
+}
+
+
+
+
+
+/* ============================================
+   FOOTER.CSS - GamerZone Dark Theme
+   ============================================ */
+
+/* Reset local */
+.sp-footer, 
+.sp-footer * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.sp-footer {
+  width: 100%;
+  margin-top: 60px;
+}
+
+/* 1. BARRA SUPERIOR */
+.sp-footer .footer-top-bar {
+  background-color: #18181b;
+  border-top: 1px solid #27272a;
+  border-bottom: 1px solid #27272a;
+  padding: 12px 20px;
+}
+
+.sp-footer .top-bar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 25px;
+  flex-wrap: wrap;
+}
+
+.sp-footer .top-bar-container a {
+  color: #e4e4e7 !important;
+  text-decoration: none !important;
+  font-weight: bold;
+  font-size: 0.92rem;
+  transition: color 0.2s ease;
+}
+
+.sp-footer .top-bar-container a:hover {
+  color: #00e5ff !important;
+}
+
+.sp-footer .top-bar-container .divider {
+  width: 1px;
+  height: 18px;
+  background-color: #3f3f46;
+}
+
+/* 2. CUERPO PRINCIPAL (Negro Gamer) */
+.sp-footer .footer-main {
+  background-color: #0f0f11;
+  color: #ffffff;
+  padding: 40px 20px;
+  border-top: 1px solid #18181b;
+}
+
+.sp-footer .footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* COLUMNAS PARALELAS */
+.sp-footer .footer-columns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+/* TÍTULOS CON INDICADOR CYAN NEÓN */
+.sp-footer .col-title {
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.sp-footer .col-title::before {
+  content: '';
+  display: inline-block;
+  width: 3px;
+  height: 16px;
+  background-color: #00e5ff; /* Cyan Neón GamerZone */
+  margin-right: 8px;
+  border-radius: 1px;
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
+}
+
+/* LISTAS DE ENLACES */
+.sp-footer .footer-col ul {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.sp-footer .footer-col ul li {
+  list-style: none !important;
+  margin-bottom: 8px;
+}
+
+.sp-footer .footer-col ul li a {
+  color: #a1a1aa !important;
+  text-decoration: none !important;
+  font-size: 0.9rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+  display: inline-block;
+}
+
+.sp-footer .footer-col ul li a:hover {
+  color: #00e5ff !important;
+  transform: translateX(3px);
+}
+
+/* LÍNEA DIVISORA */
+.sp-footer .footer-divider {
+  border: 0;
+  height: 1px;
+  background-color: #27272a;
+  margin: 30px 0;
+}
+
+/* MEDIOS DE PAGO */
+.sp-footer .footer-payments {
+  margin-bottom: 30px;
+}
+
+.sp-footer .payment-logos {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.sp-footer .payment-badge {
+  color: #a1a1aa;
+  font-weight: bold;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+}
+
+/* SECCIÓN INFERIOR */
+.sp-footer .footer-bottom-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.sp-footer .info-left {
+  display: flex;
+  align-items: center;
+}
+
+.sp-footer .security-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.85rem;
+  color: #ffffff;
+}
+
+.sp-footer .security-icon {
+  font-size: 1.8rem;
+  color: #00e5ff;
+}
+
+.sp-footer .security-box p {
+  margin: 2px 0 0 0;
+  color: #a1a1aa;
+  font-size: 0.82rem;
+}
+
+.sp-footer .info-right {
+  text-align: right;
+  font-size: 0.82rem;
+  color: #a1a1aa;
+}
+
+/* BOTONES SOCIALES OSCUROS CON HOVER CYAN */
+.sp-footer .social-grid {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.sp-footer .social-icon {
+  width: 32px;
+  height: 32px;
+  background-color: #27272a;
+  color: #ffffff !important;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none !important;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.sp-footer .social-icon:hover {
+  background-color: #00e5ff;
+  color: #0f0f11 !important;
+  transform: translateY(-2px);
+}
+
+.sp-footer .address-text {
+  margin-bottom: 6px;
+  color: #ffffff;
+}
+
+.sp-footer .schedule-box p {
+  margin: 2px 0;
+  line-height: 1.3;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .sp-footer .footer-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .sp-footer .footer-bottom-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sp-footer .info-right {
+    text-align: left;
+  }
+
+  .sp-footer .social-grid {
+    justify-content: flex-start;
+  }
+
+  .sp-footer .top-bar-container .divider {
+    display: none;
+  }
+}
+
+
+
+
+/* Contenedor Principal de Blogs */
+.blog-container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.section-title {
+  font-size: 2rem;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 30px;
+  border-left: 4px solid #00e5ff;
+  padding-left: 12px;
+}
+
+.blog-list {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* Tarjeta individual de Blog */
+.blog-item {
+  display: flex;
+  background-color: #18181b;
+  border: 1px solid #27272a;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.blog-item:hover {
+  transform: translateY(-4px);
+  border-color: #00e5ff;
+  box-shadow: 0 8px 20px rgba(0, 229, 255, 0.15);
+}
+
+/* Imagen del Blog / Placeholder */
+.blog-img {
+  flex: 0 0 35%;
+  min-height: 220px;
+  background-color: #27272a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.blog-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholder-img {
+  color: #a1a1aa;
+  font-size: 1rem;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.placeholder-img i {
+  font-size: 2rem;
+  color: #00e5ff;
+}
+
+/* Contenido de Texto */
+.blog-text {
+  flex: 1;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.blog-tag {
+  align-self: flex-start;
+  background-color: rgba(0, 229, 255, 0.1);
+  color: #00e5ff;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(0, 229, 255, 0.3);
+}
+
+.blog-text h3 {
+  color: #ffffff;
+  font-size: 1.3rem;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.blog-text p {
+  color: #a1a1aa;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+/* Ajustes Responsivos */
+@media (max-width: 768px) {
+  .blog-item {
+    flex-direction: column;
+  }
+
+  .blog-img {
+    min-height: 180px;
+  }
+}
+
+
+
+
+/* ============================================
+FORMULARIOS.CSS
+Formularios de login, registro y admin
+   ============================================ */
+
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 0;
+}
+
+.form-box {
+    background: #fff;
+    border: 1px solid var(--color-borde);
+    padding: 40px;
+    width: 100%;
+    max-width: 550px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.form-header h2 {
+    color: var(--color-azul-principal);
+    margin-bottom: 5px;
+}
+
+.form-header h3 {
+    color: var(--color-texto-gris);
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--color-texto-suave);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 12px;
+    border: 1px solid var(--color-borde-input);
+    border-radius: 8px;
+    font-size: 15px;
+    background-color: var(--color-fondo-input);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--color-azul-principal);
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.error-msg {
+    color: var(--color-error);
+    font-size: 12px;
+    margin-top: 5px;
+    font-weight: 600;
+    min-height: 18px;
+}
+
+
+
+
+
+/* ============================================
+ADMIN.CSS
+ */
+
+.table-responsive {
+    overflow-x: auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--color-borde);
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 15px 20px;
+    text-align: left;
+    border-bottom: 1px solid var(--color-borde);
+}
+
+.admin-table th {
+    background-color: var(--color-fondo-input);
+    color: var(--color-texto-suave);
+    font-weight: 700;
+}
+
+.btn-accion {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    color: #fff;
+}
+
+.btn-editar {
+    background-color: var(--color-advertencia);
+    margin-right: 5px;
+}
+
+.btn-eliminar-admin {
+    background-color: var(--color-error);
+}
+
+
+/* Ventana Modal Carrito */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: flex-end;
+  z-index: 1000;
+}
+
+.modal-carrito {
+  background: #1e1e2f;
+  color: #fff;
+  width: 100%;
+  max-width: 420px;
+  height: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -4px 0 15px rgba(0,0,0,0.5);
+  animation: slideIn 0.3s ease-in-out;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #333;
+  padding-bottom: 15px;
+}
+
+.btn-cerrar {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  margin-top: 15px;
+}
+
+.lista-carrito {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.item-carrito {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  background: #2a2a3d;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.item-carrito img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.info-item {
+  flex: 1;
+}
+
+.info-item h5 {
+  margin: 0 0 5px 0;
+  font-size: 0.95rem;
+}
+
+.detalles-item {
+  margin: 0;
+  color: #28a745;
+  font-size: 0.9rem;
+}
+
+.btn-eliminar {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.modal-footer {
+  border-top: 1px solid #333;
+  padding-top: 15px;
+}
+
+.total-compra {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+}
+
+.btn-pagar {
+  width: 100%;
+  padding: 12px;
+  background-color: #0066ff;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-cart-trigger {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+
+/* ==========================================
+   AJUSTES PARA BLOGS, FORMULARIO Y FOOTER
+   ========================================== */
+
+/* 1. Limite global de imágenes para evitar que se desborden */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 2. Sección de Blogs */
+.seccion-blogs {
+  padding: 50px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.titulo-seccion {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2rem;
+}
+
+.grid-blogs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.card-blog {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.blog-img-container {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+}
+
+.blog-img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Recorta la imagen proporcionalmente para encajar en la tarjeta */
+}
+
+.blog-contenido {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.blog-fecha {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.blog-contenido h4 {
+  margin: 0 0 10px 0;
+  font-size: 1.15rem;
+  color: #111;
+}
+
+.blog-contenido p {
+  font-size: 0.95rem;
+  color: #555;
+  flex: 1;
+  margin-bottom: 15px;
+}
+
+.btn-leer-mas {
+  color: #0066ff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* 3. Sección de Contacto */
+.seccion-contacto {
+  padding: 50px 20px;
+  background: #f8f9fa;
+}
+
+.subtitulo-contacto {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #666;
+}
+
+.formulario-contacto {
+  max-width: 600px;
+  margin: 0 auto;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cccccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.btn-enviar {
+  width: 100%;
+  padding: 12px;
+}
+
+/* 4. Pie de página (Footer) */
+footer {
+  background: #111827;
+  color: #ffffff;
+  padding-top: 40px;
+  margin-top: 50px;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 30px 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+}
+
+.footer-info h4,
+.footer-links h5,
+.footer-social h5 {
+  color: #ffffff;
+  margin-bottom: 15px;
+}
+
+.footer-links ul {
+  list-style: none; /* Elimina los puntos/viñetas de la lista */
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links ul li {
+  margin-bottom: 8px;
+}
+
+.footer-links ul li a {
+  color: #9ca3af;
+  text-decoration: none;
+}
+
+.footer-links ul li a:hover {
+  color: #ffffff;
+}
+
+.social-icons {
+  display: flex;
+  gap: 15px;
+}
+
+.social-icons a {
+  color: #ffffff;
+  font-size: 1.4rem;
+}
+
+.footer-bottom {
+  border-top: 1px solid #1f2937;
+  text-align: center;
+  padding: 20px;
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+/* ==========================================
+   ACENTOS Y DETALLES EN CELESTE ELÉCTRICO
+   ========================================== */
+
+:root {
+  --celeste-electrico: #00d2ff;
+  --celeste-hover: #00b8e6;
+}
+
+/* Enlaces del menú navegación */
+.nav-links li a.active,
+.nav-links li a:hover {
+  color: var(--celeste-electrico) !important;
+  text-shadow: 0 0 8px rgba(0, 210, 255, 0.4);
+}
+
+/* Títulos con subrayado y toque brillante */
+.titulo-seccion {
+  color: #111827;
+  position: relative;
+  display: inline-block;
+}
+
+.titulo-seccion::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 3px;
+  background-color: var(--celeste-electrico);
+  margin: 8px auto 0 auto;
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(0, 210, 255, 0.6);
+}
+
+/* Botones principales y de compra */
+.btn-primary,
+.btn-enviar,
+.btn-pagar {
+  background-color: #0055ff;
+  border: 1px solid var(--celeste-electrico);
+  color: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover,
+.btn-enviar:hover,
+.btn-pagar:hover {
+  background-color: var(--celeste-electrico);
+  color: #0d1117;
+  font-weight: bold;
+  box-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
+}
+
+/* Botón de 'Añadir al carrito' */
+.btn-agregar {
+  border: 1px solid var(--celeste-electrico);
+  color: #0055ff;
+  transition: all 0.2s ease;
+}
+
+.btn-agregar:hover {
+  background-color: var(--celeste-electrico);
+  color: #0d1117;
+  box-shadow: 0 0 10px rgba(0, 210, 255, 0.4);
+}
+
+/* Enlaces de "Leer más" en blogs */
+.btn-leer-mas {
+  color: var(--celeste-electrico) !important;
+}
+
+.btn-leer-mas:hover {
+  color: #0055ff !important;
+  text-decoration: underline;
+}
+
+/* Pie de página (Footer) */
+.footer-info h4,
+.footer-links h5,
+.footer-social h5 {
+  color: var(--celeste-electrico);
+}
+
+.footer-links ul li a:hover,
+.social-icons a:hover {
+  color: var(--celeste-electrico) !important;
+  text-shadow: 0 0 8px rgba(0, 210, 255, 0.6);
+}
+
+/* Borde e icono del Carrito */
+.cart-icon {
+  color: var(--celeste-electrico);
+}
+/* Corregir visibilidad del botón 'Añadir al carrito' */
+.card-producto .btn-agregar {
+  width: 100%;
+  padding: 10px 15px;
+  background-color: #0066ff; /* Fondo azul visible */
+  color: #ffffff !important; /* Texto blanco en alto contraste */
+  border: 1px solid #00d2ff; /* Borde celeste eléctrico */
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+/* Efecto Hover al pasar el mouse */
+.card-producto .btn-agregar:hover {
+  background-color: #00d2ff; /* Fondo celeste eléctrico */
+  color: #0d1117 !important; /* Texto oscuro de alta legibilidad */
+  box-shadow: 0 0 12px rgba(0, 210, 255, 0.6);
+}
+
+
+/* ==========================================
+   SECCIÓN NOSOTROS (VISTA INDEPENDIENTE)
+   ========================================== */
+.seccion-nosotros {
+  padding: 60px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 60vh;
+}
+
+.subtitulo-nosotros {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 40px auto;
+  color: #666;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.nosotros-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-bottom: 50px;
+}
+
+.nosotros-card {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  border-top: 3px solid #00d2ff;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.nosotros-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 210, 255, 0.2);
+}
+
+.nosotros-icon {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+}
+
+.nosotros-card h3 {
+  font-size: 1.3rem;
+  color: #111827;
+  margin-bottom: 12px;
+}
+
+.nosotros-card p {
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.nosotros-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  background: #111827;
+  padding: 40px 20px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 0 15px rgba(0, 210, 255, 0.15);
+}
+
+.stat-item h4 {
+  font-size: 2.2rem;
+  color: #00d2ff;
+  margin: 0 0 5px 0;
+  text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+}
+
+.stat-item p {
+  color: #9ca3af;
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* ==========================================
+   FORMULARIOS DE AUTH (LOGIN / REGISTRO)
+   ========================================== */
+.seccion-auth {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  padding: 40px 20px;
+}
+
+.auth-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 440px;
+  padding: 35px 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  border-top: 4px solid #00d2ff;
+}
+
+.auth-card h2 {
+  margin: 0 0 5px 0;
+  text-align: center;
+  color: #111827;
+  font-size: 1.8rem;
+}
+
+.auth-subtitulo {
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.95rem;
+  margin-bottom: 25px;
+}
+
+.auth-form .form-group {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-form label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+.auth-form input[type="text"],
+.auth-form input[type="email"],
+.auth-form input[type="password"] {
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.auth-form input:focus {
+  outline: none;
+  border-color: #00d2ff;
+  box-shadow: 0 0 8px rgba(0, 210, 255, 0.4);
+}
+
+.form-group-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+
+.btn-auth {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #e5e7eb;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: #00d2ff;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.9rem;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+  color: #0055ff;
+}
+
+.auth-error {
+  background-color: #fee2e2;
+  color: #dc2626;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.user-welcome {
+  color: #00d2ff;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.btn-logout {
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0 4px;
+}
+
+.btn-logout:hover {
+  text-decoration: underline;
+}
+
+/* Corregir contraste y visibilidad de los puntos de contraseña e inputs */
+.auth-form input,
+.formulario-contacto input,
+.formulario-contacto textarea,
+.formulario-contacto select {
+  color: #111827 !important; /* Texto y puntos oscuros de alta legibilidad */
+  background-color: #ffffff !important; /* Fondo blanco puro */
+}
+
+/* Visibilidad de los puntos del placeholder */
+.auth-form input::placeholder,
+.formulario-contacto input::placeholder {
+  color: #9ca3af !important;
+  opacity: 1;
+}
+
+/* Espaciado para que los puntos de la contraseña se vean más claros */
+.auth-form input[type="password"] {
+  letter-spacing: 2px;
+}
+
+/* ==========================================
+   MODAL DE NOTIFICACIÓN PROFESIONAL (GAMER)
+   ========================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.modal-card {
+  background: #111827;
+  border: 1px solid #00d2ff;
+  box-shadow: 0 0 25px rgba(0, 210, 255, 0.35);
+  border-radius: 12px;
+  padding: 30px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  color: #ffffff;
+}
+
+.modal-icon {
+  font-size: 2.8rem;
+  margin-bottom: 10px;
+}
+
+.modal-card h3 {
+  color: #00d2ff;
+  font-size: 1.5rem;
+  margin: 0 0 10px 0;
+  text-shadow: 0 0 8px rgba(0, 210, 255, 0.5);
+}
+
+.modal-card p {
+  color: #d1d5db;
+  font-size: 0.95rem;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+
+.btn-modal {
+  width: 100%;
+  padding: 10px 0;
+  font-size: 1rem;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Corregir color y diseño de las listas desplegables (Región y Comuna) */
+.auth-form select {
+  color: #111827 !important; /* Texto oscuro */
+  background-color: #ffffff !important; /* Fondo blanco */
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  width: 100%;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  appearance: auto; /* Asegura que se vea la flechita del menú */
+}
+
+.auth-form select:focus {
+  outline: none;
+  border-color: #00d2ff;
+  box-shadow: 0 0 8px rgba(0, 210, 255, 0.4);
+}
+
+/* Margen superior para que el menú fijo no tape los títulos al hacer scroll */
+section,
+#blogs,
+#contacto,
+#nosotros,
+#productos-destacados {
+  scroll-margin-top: 90px;
+}
+
+/* Títulos estandarizados con subrayado celeste */
+.titulo-seccion {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #111827;
+  position: relative;
+  display: inline-block;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.sublinea-titulo {
+  width: 50px;
+  height: 4px;
+  background-color: #00d2ff;
+  margin: 8px auto 0 auto;
+  border-radius: 2px;
+}
+
+/* Control estricto de tamaño para el logo del Header */
+.logo {
+  display: flex;
+  align-items: center;
+  max-height: 60px;
+}
+
+.logo img {
+  max-height: 50px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* ESTILOS DEL ENCABEZADO (HEADER) */
+.header {
+  background-color: #0b0f19;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid #1f2937;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* LOGO */
+.logo {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.logo img {
+  height: 45px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* MENÚ NAVEGACIÓN PRINCIPAL */
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav-link {
+  color: #e5e7eb;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: #00d2ff;
+}
+
+.icone-flecha {
+  font-size: 0.75rem;
+}
+
+/* SUBMENÚ DESPLEGABLE */
+.dropdown-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 8px;
+  padding: 8px 0;
+  min-width: 160px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+}
+
+.dropdown-menu a {
+  padding: 10px 18px;
+  color: #d1d5db;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: background 0.2s, color 0.2s;
+}
+
+.dropdown-menu a:hover {
+  background-color: #1f2937;
+  color: #00d2ff;
+}
+
+/* LOGIN, REGISTRO Y CARRITO */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+}
+
+.header-actions a {
+  color: #e5e7eb;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.header-actions a:hover {
+  color: #00d2ff;
+}
+
+.separador {
+  color: #4b5563;
+}
+
+.usuario-saludo {
+  color: #00d2ff;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-salir {
+  background: none;
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+}
+
+.btn-salir:hover {
+  background-color: #ef4444;
+  color: #fff;
+}
+
+.btn-carrito {
+  background-color: #1f2937;
+  color: #fff;
+  border: 1px solid #374151;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.btn-carrito:hover {
+  background-color: #00d2ff;
+  color: #000;
+  border-color: #00d2ff;
+}
+
+/* Margen para Header fijo en todas las secciones */
+#sobre-gamerzone,
+#equipo-gz,
+#productos,
+#blogs,
+#contacto,
+section {
+  scroll-margin-top: 80px;
+}
