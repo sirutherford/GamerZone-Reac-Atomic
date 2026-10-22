@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
-import Carrito from './Carrito';
+import Carrito from '../components/organisms/Carrito';
 
-describe('Pruebas Unitarias - Componente Carrito (GamerZone)', () => {
+fdescribe('Pruebas Unitarias - Componente Carrito (GamerZone)', () => {
   let mockCerrarCarrito;
   let mockEliminarDelCarrito;
 

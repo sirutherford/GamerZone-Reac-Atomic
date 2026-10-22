@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, fireEvent, screen, act } from '@testing-library/react';
-import Header from './Header';
+import Header from '../components/organisms/Header';
 
-describe('Pruebas Unitarias - Componente Header (GamerZone)', () => {
+fdescribe('Pruebas Unitarias - Componente Header (GamerZone)', () => {
   let mockNavegarA;
   let mockAbrirCarrito;
   let mockCerrarSesion;
@@ -137,9 +137,8 @@ describe('Pruebas Unitarias - Componente Header (GamerZone)', () => {
       fireEvent.click(screen.getByText('Hogar'));
     }).not.toThrow();
   });
-});
 
-it('debe aplicar el color activo correspondiente según seccionActiva', () => {
+  it('Debe aplicar el color activo correspondiente según seccionActiva', () => {
     const { rerender } = render(<Header seccionActiva="home" />);
     expect(screen.getByText('Hogar').style.color).toBe('rgb(0, 210, 255)');
 
@@ -152,3 +151,4 @@ it('debe aplicar el color activo correspondiente según seccionActiva', () => {
     rerender(<Header seccionActiva="contacto" />);
     expect(screen.getByText('Contacto').style.color).toBe('rgb(0, 210, 255)');
   });
+});

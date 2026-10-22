@@ -5,7 +5,6 @@ function customGamerZoneInstrumenter() {
   return {
     name: 'gz-instrumenter',
     setup(build) {
-      // Configuramos el instrumentador habilitando explícitamente el parser de JSX
       const instrumenter = createInstrumenter({
         esModules: true,
         parserPlugins: [

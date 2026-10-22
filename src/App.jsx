@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import Header from './components/Header';
-import Hero from './components/Hero';
-import Productos from './components/Productos';
-import Nosotros from './components/Nosotros';
-import Blogs from './components/Blogs';
-import Contacto from './components/Contacto';
-import Login from './components/Login';
-import Registro from './components/Registro';
-import Carrito from './components/Carrito';
-import Footer from './components/Footer';
+
+// Organismos
+import Header from './components/organisms/Header';
+import Hero from './components/organisms/Hero';
+import Footer from './components/organisms/Footer';
+import Carrito from './components/organisms/Carrito';
+
+// Páginas
+import Productos from './pages/Productos';
+import DetalleProducto from './pages/DetalleProducto';
+import Nosotros from './pages/Nosotros';
+import Blogs from './pages/Blogs';
+import Contacto from './pages/Contacto';
+import Login from './pages/Login';
+import Registro from './pages/Registro';
+import HistorialCompras from './pages/HistorialCompras';
+import ConfiguracionUsuario from './pages/ConfiguracionUsuario';
+import AdminDashboard from './pages/AdminDashboard';
 
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './App.css';
@@ -17,21 +25,80 @@ function App() {
   const [carrito, setCarrito] = useState([]);
   const [mostrarCarrito, setMostrarCarrito] = useState(false);
   
-  // Vistas principales: 'home', 'productos', 'nosotros', 'login', 'registro'
   const [vistaActual, setVistaActual] = useState('home');
-  // Iluminación del menú: 'home', 'productos', 'nosotros', 'blogs', 'contacto', 'login', 'registro'
   const [seccionActiva, setSeccionActiva] = useState('home');
-  const [usuario, setUsuario] = useState(null);
+  
+  // Estado del usuario
+  const [usuario, setUsuario] = useState(() => {
+    try {
+      const sesionRaw = localStorage.getItem('usuarioGamerZone');
+      if (!sesionRaw) return null;
 
-  const agregarAlCarrito = (producto) => {
+      let userObj = typeof JSON.parse(sesionRaw) === 'object' 
+        ? JSON.parse(sesionRaw) 
+        : { nombre: JSON.parse(sesionRaw) };
+
+      return userObj;
+    } catch (e) {
+      return null;
+    }
+  });
+
+  const [productoSeleccionado, setProductoSeleccionado] = useState(null);
+
+  // Sincronizar automáticamente el estado del usuario desde localStorage al cambiar de vista
+  useEffect(() => {
+    try {
+      const sesionRaw = localStorage.getItem('usuarioGamerZone');
+      const esAdminAuth = localStorage.getItem('adminAutenticadoGamerZone') === 'true';
+
+      if (sesionRaw) {
+        let userObj = JSON.parse(sesionRaw);
+        if (typeof userObj !== 'object') {
+          userObj = { nombre: userObj };
+        }
+
+        if (esAdminAuth) {
+          userObj.esAdmin = true;
+          userObj.rol = 'admin';
+        }
+
+        setUsuario(userObj);
+      } else if (esAdminAuth) {
+        setUsuario({
+          nombre: 'Administrador',
+          email: 'admin@gamerzone.cl',
+          rol: 'admin',
+          esAdmin: true
+        });
+      }
+    } catch (e) {
+      console.error('Error al sincronizar sesión:', e);
+    }
+  }, [vistaActual]);
+
+  // Verificación global de Administrador
+  const rolActual = (usuario?.rol || usuario?.role || usuario?.tipo || '').toLowerCase();
+  const esAdmin = Boolean(
+    usuario?.esAdmin === true ||
+    rolActual === 'admin' ||
+    rolActual === 'administrador' ||
+    localStorage.getItem('adminAutenticadoGamerZone') === 'true'
+  );
+
+  const nombreUsuario = typeof usuario === 'object' 
+    ? (usuario?.nombre || usuario?.usuario || usuario?.email) 
+    : usuario;
+
+  const agregarAlCarrito = (producto, cantidad = 1) => {
     setCarrito((prev) => {
       const existe = prev.find((item) => item.id === producto.id);
       if (existe) {
         return prev.map((item) =>
-          item.id === producto.id ? { ...item, cantidad: item.cantidad + 1 } : item
+          item.id === producto.id ? { ...item, cantidad: item.cantidad + cantidad } : item
         );
       }
-      return [...prev, { ...producto, cantidad: 1 }];
+      return [...prev, { ...producto, cantidad }];
     });
   };
 
@@ -39,27 +106,134 @@ function App() {
     setCarrito((prev) => prev.filter((item) => item.id !== id));
   };
 
+  const vaciarCarrito = () => setCarrito([]);
+
   const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0);
 
-  // Función para manejar el inicio de sesión exitoso
-  const handleAuthExitoso = (nombreUsuario) => {
-    setUsuario(nombreUsuario);
+  const handleVerDetalle = (producto) => {
+    setProductoSeleccionado(producto);
+    navegarA('detalle-producto');
+  };
+
+  const handleFinalizarCompra = (datosEntrega = {}) => {
+    if (carrito.length === 0) return;
+
+    try {
+      let productosActuales = [];
+      const guardados = localStorage.getItem('productosGamerZone');
+      if (guardados) {
+        productosActuales = JSON.parse(guardados);
+      }
+
+      const productosActualizados = productosActuales.map((prod) => {
+        const enCarrito = carrito.find((item) => item.id === prod.id || item.codigo === prod.codigo);
+        if (enCarrito) {
+          const stockActual = Number(prod.stock) || 0;
+          const nuevoStock = Math.max(0, stockActual - enCarrito.cantidad);
+          return { ...prod, stock: nuevoStock };
+        }
+        return prod;
+      });
+
+      localStorage.setItem('productosGamerZone', JSON.stringify(productosActualizados));
+
+      const totalPagar = carrito.reduce((sum, item) => {
+        const precioNum = typeof item.precio === 'number'
+          ? item.precio
+          : parseInt(String(item.precio || 0).replace(/[^0-9]/g, ''), 10) || 0;
+        return sum + (precioNum * item.cantidad);
+      }, 0);
+
+      // Estructura oficial de la boleta vinculada con RUT y Email
+      const nuevaBoleta = {
+        numBoleta: Math.floor(100000 + Math.random() * 900000),
+        fecha: new Date().toLocaleDateString('es-CL'),
+        usuario: nombreUsuario || 'Cliente',
+        email: typeof usuario === 'object' ? (usuario?.email || '') : '',
+        rut: typeof usuario === 'object' ? (usuario?.rut || datosEntrega?.rut || 'Sin RUT') : (datosEntrega?.rut || 'Sin RUT'),
+        total: totalPagar,
+        productos: [...carrito],
+        datosEntrega
+      };
+
+      const historialPrevio = JSON.parse(localStorage.getItem('historialComprasGamerZone')) || [];
+      localStorage.setItem('historialComprasGamerZone', JSON.stringify([nuevaBoleta, ...historialPrevio]));
+
+      vaciarCarrito();
+      setMostrarCarrito(false);
+      alert('🎉 ¡Compra realizada con éxito! La boleta ha quedado registrada.');
+    } catch (e) {
+      console.error('Error al procesar compra:', e);
+      alert('Ocurrió un error al procesar la compra.');
+    }
+  };
+
+  const handleIngresarAdmin = () => {
+    setVistaActual('admin');
+    setSeccionActiva('admin');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleAuthExitoso = (datosUsuario) => {
+    let objetoUsuario = typeof datosUsuario === 'object' 
+      ? datosUsuario 
+      : { nombre: datosUsuario, email: datosUsuario };
+
+    // Cruzar información con la base de datos local
+    const posiblesClaves = ['usuariosGamerZone', 'usuarios', 'users', 'cuentas'];
+    for (let clave of posiblesClaves) {
+      const dataLocal = localStorage.getItem(clave);
+      if (dataLocal) {
+        const lista = JSON.parse(dataLocal);
+        if (Array.isArray(lista)) {
+          const coincidencia = lista.find(u => 
+            (u.email && u.email.toLowerCase() === (objetoUsuario.email || '').toLowerCase()) ||
+            (u.nombre && u.nombre.toLowerCase() === (objetoUsuario.nombre || '').toLowerCase())
+          );
+          if (coincidencia) {
+            objetoUsuario = { ...objetoUsuario, ...coincidencia };
+            break;
+          }
+        }
+      }
+    }
+
+    const rolVal = (objetoUsuario.rol || objetoUsuario.role || '').toLowerCase();
+    const esAdminDetectado = objetoUsuario.esAdmin === true || rolVal === 'admin' || rolVal === 'administrador';
+
+    if (esAdminDetectado) {
+      objetoUsuario.esAdmin = true;
+      objetoUsuario.rol = 'admin';
+      localStorage.setItem('adminAutenticadoGamerZone', 'true');
+    }
+
+    setUsuario(objetoUsuario);
+    localStorage.setItem('usuarioGamerZone', JSON.stringify(objetoUsuario));
+
+    if (esAdminDetectado) {
+      setVistaActual('admin');
+      setSeccionActiva('admin');
+    } else {
+      navegarA('home');
+    }
+  };
+
+  const handleCerrarSesion = () => {
+    setUsuario(null);
+    localStorage.removeItem('usuarioGamerZone');
+    localStorage.removeItem('adminAutenticadoGamerZone');
     navegarA('home');
   };
 
-  // Función global de navegación con scroll nativo y preciso
   const navegarA = (nuevaVista, idSeccion = null) => {
     setVistaActual(nuevaVista);
     setSeccionActiva(idSeccion || nuevaVista);
 
-    // Damos un pequeño respiro para que React renderice la vista
     setTimeout(() => {
-      // Intentamos buscar el elemento en la página
       const elemento = document.getElementById(idSeccion || nuevaVista);
       
       if (elemento) {
-        // Si la sección existe (ej: 'blogs', 'contacto'), bajamos hasta ella
-        const headerOffset = 64; // Altura de tu nuevo menú
+        const headerOffset = 64;
         const elementPosition = elemento.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
@@ -68,13 +242,11 @@ function App() {
           behavior: 'smooth'
         });
       } else {
-        // Si no existe la sección, nos aseguramos de ir al inicio
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }, 150);
   };
 
-  // Detección de scroll únicamente dentro de la vista 'home'
   useEffect(() => {
     if (vistaActual !== 'home') return;
 
@@ -96,6 +268,19 @@ function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [vistaActual]);
 
+  // VISTA DEDICADA: PANEL ADMINISTRADOR
+  if (vistaActual === 'admin') {
+    return (
+      <AdminDashboard 
+        navegarA={navegarA}
+        alCerrarSesion={handleCerrarSesion}
+        usuarioActual={nombreUsuario || 'Administrador'}
+        alAutenticar={handleAuthExitoso}
+      />
+    );
+  }
+
+  // VISTAS PÚBLICAS DE LA TIENDA GAMERZONE
   return (
     <div>
       <Header 
@@ -104,17 +289,45 @@ function App() {
         seccionActiva={seccionActiva}
         navegarA={navegarA}
         usuario={usuario}
-        cerrarSesion={() => setUsuario(null)}
+        nombreUsuario={nombreUsuario}
+        esAdmin={esAdmin}
+        cerrarSesion={handleCerrarSesion}
+        alIngresarAdmin={handleIngresarAdmin}
       />
       
       <main>
         {vistaActual === 'productos' ? (
           <div style={{ paddingTop: '20px' }}>
-            <Productos agregarAlCarrito={agregarAlCarrito} />
+            <Productos 
+              key={`productos-${vistaActual}`}
+              agregarAlCarrito={agregarAlCarrito} 
+              verDetalle={handleVerDetalle}
+            />
           </div>
+        ) : vistaActual === 'detalle-producto' ? (
+          <DetalleProducto 
+            producto={productoSeleccionado}
+            alAgregarAlCarrito={agregarAlCarrito}
+            volverAProductos={() => navegarA('productos')}
+          />
         ) : vistaActual === 'nosotros' ? (
           <div style={{ paddingTop: '20px' }}>
             <Nosotros />
+          </div>
+        ) : vistaActual === 'historial' ? (
+          <div style={{ paddingTop: '20px' }}>
+            {/* Se envía la sesión completa 'usuario' para filtro por R.U.T. e Email */}
+            <HistorialCompras 
+              usuario={usuario}
+              irATienda={() => navegarA('productos')}
+            />
+          </div>
+        ) : vistaActual === 'configuracion' ? (
+          <div style={{ paddingTop: '20px' }}>
+            <ConfiguracionUsuario 
+              usuario={nombreUsuario}
+              alActualizarUsuario={(nuevoNombre) => setUsuario(prev => typeof prev === 'object' ? { ...prev, nombre: nuevoNombre } : nuevoNombre)}
+            />
           </div>
         ) : vistaActual === 'login' ? (
           <Login 
@@ -130,12 +343,13 @@ function App() {
           <>
             <Hero />
             <Productos 
+              key={`home-${vistaActual}`}
               limite={5} 
               agregarAlCarrito={agregarAlCarrito} 
               verCatalogoCompleto={() => navegarA('productos')}
+              verDetalle={handleVerDetalle}
             />
             
-            {/* AQUI AGREGAMOS LOS IDENTIFICADORES ID */}
             <div id="blogs">
               <Blogs />
             </div>
@@ -153,7 +367,12 @@ function App() {
         <Carrito 
           carrito={carrito} 
           cerrarCarrito={() => setMostrarCarrito(false)} 
-          eliminarDelCarrito={eliminarDelCarrito} 
+          eliminarDelCarrito={eliminarDelCarrito}
+          vaciarCarrito={vaciarCarrito}
+          usuario={nombreUsuario}
+          irALogin={() => navegarA('login')}
+          irARegistro={() => navegarA('registro')}
+          alFinalizarCompra={handleFinalizarCompra}
         />
       )}
     </div>
