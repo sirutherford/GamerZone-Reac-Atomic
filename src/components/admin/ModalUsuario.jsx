@@ -1,6 +1,5 @@
 import React from 'react';
 
-// Base de datos completa de Regiones, Provincias y Comunas de GamerZone Chile
 const REGIONES_CHILE = {
   "Región Metropolitana": {
     "Santiago": ["Providencia", "Las Condes", "Santiago", "Ñuñoa", "Maipú", "La Florida", "Peñalolén", "Vitacura", "Lo Barnechea", "Macul", "San Miguel", "Pudahuel", "Quilicura", "Renca", "Recoleta", "Independencia"],
@@ -110,9 +109,7 @@ const inputEstiloGamer = {
   outline: 'none'
 };
 
-const ModalUsuario = ({ esEdicion, formData, setFormData, onSubmit, alCerrar }) => {
-  
-  // Selección actual de Región, Provincia y Comuna
+const ModalUsuario = ({ esEdicion, formData, setFormData, onSubmit, alGuardar, alCerrar }) => {
   const regionSeleccionada = formData.region && REGIONES_CHILE[formData.region] ? formData.region : "Región Metropolitana";
   const provinciasDisponibles = Object.keys(REGIONES_CHILE[regionSeleccionada] || {});
 
@@ -156,6 +153,16 @@ const ModalUsuario = ({ esEdicion, formData, setFormData, onSubmit, alCerrar }) 
     });
   };
 
+  const handleSubmitForm = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    if (e && e.stopPropagation) e.stopPropagation();
+
+    const funcionSubmit = onSubmit || alGuardar;
+    if (funcionSubmit) {
+      funcionSubmit(e);
+    }
+  };
+
   return (
     <div style={{
       position: 'fixed',
@@ -187,9 +194,9 @@ const ModalUsuario = ({ esEdicion, formData, setFormData, onSubmit, alCerrar }) 
           {esEdicion ? 'Modifica la información personal, estado y datos del usuario.' : 'Crea una nueva cuenta de usuario en la plataforma.'}
         </p>
 
-        <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        <form onSubmit={handleSubmitForm} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           
-          {/* 1. Nombre Completo / Usuario */}
+          {/* Nombre Completo */}
           <div>
             <label style={labelEstiloGamer}>Nombre Completo / Usuario</label>
             <input 
@@ -202,7 +209,7 @@ const ModalUsuario = ({ esEdicion, formData, setFormData, onSubmit, alCerrar }) 
             />
           </div>
 
-          {/* 2. R.U.T. */}
+          {/* R.U.T. */}
           <div>
             <label style={labelEstiloGamer}>R.U.T.</label>
             <input 
@@ -215,7 +222,7 @@ const ModalUsuario = ({ esEdicion, formData, setFormData, onSubmit, alCerrar }) 
             />
           </div>
 
-          {/* 3. Correo Electrónico */}
+          {/* Correo Electrónico */}
           <div>
             <label style={labelEstiloGamer}>Correo Electrónico</label>
             <input 
@@ -228,7 +235,7 @@ const ModalUsuario = ({ esEdicion, formData, setFormData, onSubmit, alCerrar }) 
             />
           </div>
 
-          {/* 4. Estado de Acceso a la Cuenta (Bloquear / Desbloquear) */}
+          {/* Estado de Acceso */}
           <div>
             <label style={labelEstiloGamer}>Estado de Acceso a la Cuenta</label>
             <select
@@ -245,7 +252,7 @@ const ModalUsuario = ({ esEdicion, formData, setFormData, onSubmit, alCerrar }) 
             </select>
           </div>
 
-          {/* 5. Rol de la Cuenta (Cliente vs Administrador) */}
+          {/* Rol de la Cuenta */}
           <div>
             <label style={labelEstiloGamer}>Rol de la Cuenta</label>
             <select
@@ -262,7 +269,7 @@ const ModalUsuario = ({ esEdicion, formData, setFormData, onSubmit, alCerrar }) 
             </select>
           </div>
 
-          {/* 6. Dirección de Calle y Número */}
+          {/* Dirección */}
           <div>
             <label style={labelEstiloGamer}>Dirección de Calle y Número</label>
             <input 
@@ -274,15 +281,11 @@ const ModalUsuario = ({ esEdicion, formData, setFormData, onSubmit, alCerrar }) 
             />
           </div>
 
-          {/* 7. Región, Provincia y Comuna Dinámicas */}
+          {/* Región, Provincia y Comuna */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
             <div>
               <label style={labelEstiloGamer}>Región</label>
-              <select 
-                value={regionSeleccionada} 
-                onChange={handleRegionChange}
-                style={inputEstiloGamer}
-              >
+              <select value={regionSeleccionada} onChange={handleRegionChange} style={inputEstiloGamer}>
                 {Object.keys(REGIONES_CHILE).map((reg) => (
                   <option key={reg} value={reg}>{reg}</option>
                 ))}
@@ -291,11 +294,7 @@ const ModalUsuario = ({ esEdicion, formData, setFormData, onSubmit, alCerrar }) 
 
             <div>
               <label style={labelEstiloGamer}>Provincia</label>
-              <select 
-                value={provinciaSeleccionada} 
-                onChange={handleProvinciaChange}
-                style={inputEstiloGamer}
-              >
+              <select value={provinciaSeleccionada} onChange={handleProvinciaChange} style={inputEstiloGamer}>
                 {provinciasDisponibles.map((prov) => (
                   <option key={prov} value={prov}>{prov}</option>
                 ))}
@@ -304,11 +303,7 @@ const ModalUsuario = ({ esEdicion, formData, setFormData, onSubmit, alCerrar }) 
 
             <div>
               <label style={labelEstiloGamer}>Comuna</label>
-              <select 
-                value={formData.comuna || (comunasDisponibles[0] || '')} 
-                onChange={handleComunaChange}
-                style={inputEstiloGamer}
-              >
+              <select value={formData.comuna || (comunasDisponibles[0] || '')} onChange={handleComunaChange} style={inputEstiloGamer}>
                 {comunasDisponibles.map((com) => (
                   <option key={com} value={com}>{com}</option>
                 ))}
@@ -316,65 +311,33 @@ const ModalUsuario = ({ esEdicion, formData, setFormData, onSubmit, alCerrar }) 
             </div>
           </div>
 
-          {/* 8. Seguridad / Contraseñas */}
-          {esEdicion ? (
-            <div style={{
-              backgroundColor: 'rgba(56, 189, 248, 0.1)',
-              border: '1px solid #0284c7',
-              borderRadius: '8px',
-              padding: '12px 16px',
-              fontSize: '0.8rem',
-              color: '#38bdf8',
-              textAlign: 'center',
-              marginTop: '6px'
-            }}>
-               <strong>Seguridad:</strong> La contraseña está protegida y encriptada. No se puede modificar desde la administración.
+          {/* Gestión de Contraseña segura */}
+          <div>
+            <label style={labelEstiloGamer}>
+              {esEdicion ? 'Nueva Contraseña (Opcional)' : 'Contraseña Inicial'}
+            </label>
+            <input 
+              type="password" 
+              value={formData.password || ''} 
+              onChange={(e) => setFormData({ ...formData, password: e.target.value, clave: e.target.value })}
+              placeholder={esEdicion ? "Dejar en blanco para conservar la clave actual" : "••••••••"}
+              style={inputEstiloGamer} 
+              required={!esEdicion}
+            />
+          </div>
+
+          {!esEdicion && (
+            <div>
+              <label style={labelEstiloGamer}>Confirmar Contraseña Inicial</label>
+              <input 
+                type="password" 
+                value={formData.confirmarPassword || ''} 
+                onChange={(e) => setFormData({ ...formData, confirmarPassword: e.target.value })}
+                placeholder="••••••••"
+                style={inputEstiloGamer} 
+                required 
+              />
             </div>
-          ) : (
-            <>
-              <div>
-                <label style={labelEstiloGamer}>Contraseña Inicial</label>
-                <input 
-                  type="password" 
-                  value={formData.password || ''} 
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  placeholder="••••••••"
-                  style={inputEstiloGamer} 
-                  required 
-                />
-              </div>
-
-              <div style={{
-                backgroundColor: '#131c2a',
-                border: '1px solid #2d3b52',
-                borderRadius: '8px',
-                padding: '12px 16px',
-                fontSize: '0.78rem',
-                color: '#94a3b8'
-              }}>
-                <div style={{ fontWeight: '700', color: '#cbd5e1', marginBottom: '6px', textAlign: 'center' }}>
-                  La contraseña debe contener:
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 12px' }}>
-                  <div>• Mínimo 8 caracteres</div>
-                  <div>• Una mayúscula</div>
-                  <div>• Un número</div>
-                  <div>• Un símbolo (!@#$...)</div>
-                </div>
-              </div>
-
-              <div>
-                <label style={labelEstiloGamer}>Confirmar Contraseña Inicial</label>
-                <input 
-                  type="password" 
-                  value={formData.confirmarPassword || ''} 
-                  onChange={(e) => setFormData({ ...formData, confirmarPassword: e.target.value })}
-                  placeholder="••••••••"
-                  style={inputEstiloGamer} 
-                  required 
-                />
-              </div>
-            </>
           )}
 
           {/* Botones */}

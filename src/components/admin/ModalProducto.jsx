@@ -21,11 +21,18 @@ const inputEstiloGamer = {
   outline: 'none'
 };
 
-const ModalProducto = ({ esEdicion, formData, setFormData, onSubmit, alCerrar }) => {
-  const [modoImagen, setModoImagen] = useState('archivo'); // 'archivo' | 'url'
+const ModalProducto = ({ esEdicion, formData, setFormData, onSubmit, alGuardar, alCerrar }) => {
+  const [modoImagen, setModoImagen] = useState('archivo');
   const [nombreArchivo, setNombreArchivo] = useState('');
 
-  // Convierte el archivo seleccionado a Base64
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    const funcionGuardar = onSubmit || alGuardar;
+    if (funcionGuardar) {
+      funcionGuardar(e);
+    }
+  };
+
   const handleImageFileChange = (e) => {
     const file = e.target.files && e.target.files[0];
     if (file) {
@@ -45,21 +52,16 @@ const ModalProducto = ({ esEdicion, formData, setFormData, onSubmit, alCerrar })
     }
   };
 
-  // NUEVA FUNCIÓN: Para formatear el precio automáticamente mientras se escribe
+  // Mantiene solo dígitos puros en el estado para evitar el fallo con los puntos decimales
   const handlePrecioChange = (e) => {
-    // 1. Quitar cualquier cosa que no sea número
     const valorLimpio = e.target.value.replace(/\D/g, '');
-    
-    // 2. Si queda vacío, actualizamos el estado en blanco
-    if (!valorLimpio) {
-      setFormData({ ...formData, precio: '' }); 
-      return;
-    }
-    
-    // 3. Formateamos y guardamos (ej: 15000 -> "15.000")
-    const valorFormateado = Number(valorLimpio).toLocaleString('es-CL');
-    setFormData({ ...formData, precio: valorFormateado });
+    setFormData(prev => ({ ...prev, precio: valorLimpio }));
   };
+
+  // Obtiene la representación con formato CLP para visualizar en el campo
+  const precioFormateado = formData.precio !== undefined && formData.precio !== ''
+    ? Number(String(formData.precio).replace(/\D/g, '')).toLocaleString('es-CL')
+    : '';
 
   return (
     <div style={{
@@ -89,7 +91,7 @@ const ModalProducto = ({ esEdicion, formData, setFormData, onSubmit, alCerrar })
           {esEdicion ? '✏️ Editar Producto' : '➕ Nuevo Producto'}
         </h3>
 
-        <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginTop: '16px' }}>
+        <form onSubmit={handleFormSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginTop: '16px' }}>
           
           {/* Código */}
           <div>
@@ -117,7 +119,7 @@ const ModalProducto = ({ esEdicion, formData, setFormData, onSubmit, alCerrar })
             />
           </div>
 
-          {/* Descripción del Producto */}
+          {/* Descripción */}
           <div>
             <label style={labelEstiloGamer}>Descripción del Producto</label>
             <textarea 
@@ -140,7 +142,7 @@ const ModalProducto = ({ esEdicion, formData, setFormData, onSubmit, alCerrar })
               <label style={labelEstiloGamer}>Precio ($ CLP)</label>
               <input 
                 type="text" 
-                value={formData.precio ? Number(String(formData.precio).replace(/\D/g, '')).toLocaleString('es-CL') : ''} 
+                value={precioFormateado} 
                 onChange={handlePrecioChange}
                 placeholder="49.990"
                 style={inputEstiloGamer} 
@@ -178,7 +180,7 @@ const ModalProducto = ({ esEdicion, formData, setFormData, onSubmit, alCerrar })
             </select>
           </div>
 
-          {/* Carga de Imagen GamerZone */}
+          {/* Carga de Imagen */}
           <div>
             <label style={labelEstiloGamer}>Imagen del Producto</label>
             
@@ -194,8 +196,7 @@ const ModalProducto = ({ esEdicion, formData, setFormData, onSubmit, alCerrar })
                   color: '#ffffff',
                   fontSize: '0.82rem',
                   fontWeight: '700',
-                  cursor: 'pointer',
-                  boxShadow: modoImagen === 'archivo' ? '0 0 10px rgba(0, 112, 243, 0.4)' : 'none'
+                  cursor: 'pointer'
                 }}
               >
                 💻 Subir desde PC
@@ -212,8 +213,7 @@ const ModalProducto = ({ esEdicion, formData, setFormData, onSubmit, alCerrar })
                   color: '#ffffff',
                   fontSize: '0.82rem',
                   fontWeight: '700',
-                  cursor: 'pointer',
-                  boxShadow: modoImagen === 'url' ? '0 0 10px rgba(0, 112, 243, 0.4)' : 'none'
+                  cursor: 'pointer'
                 }}
               >
                 🔗 Enlace URL
@@ -246,12 +246,9 @@ const ModalProducto = ({ esEdicion, formData, setFormData, onSubmit, alCerrar })
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '10px',
-                    boxSizing: 'border-box',
-                    textAlign: 'center',
-                    userSelect: 'none'
+                    boxSizing: 'border-box'
                   }}
                 >
-                  <span style={{ fontSize: '1.2rem' }}></span>
                   <span>
                     {nombreArchivo ? `Seleccionado: ${nombreArchivo}` : 'Elegir archivo de imagen desde tu PC...'}
                   </span>
@@ -269,7 +266,6 @@ const ModalProducto = ({ esEdicion, formData, setFormData, onSubmit, alCerrar })
               </div>
             )}
 
-            {/* Vista Previa */}
             {formData.imagen && (
               <div style={{ marginTop: '14px', textAlign: 'center' }}>
                 <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '6px' }}>Vista previa de la portada:</div>
@@ -281,15 +277,14 @@ const ModalProducto = ({ esEdicion, formData, setFormData, onSubmit, alCerrar })
                     height: '90px',
                     objectFit: 'cover',
                     borderRadius: '10px',
-                    border: '2px solid #0070f3',
-                    boxShadow: '0 4px 14px rgba(0,0,0,0.5)'
+                    border: '2px solid #0070f3'
                   }} 
                 />
               </div>
             )}
           </div>
 
-          {/* Botones Accionables */}
+          {/* Botones */}
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '16px' }}>
             <button 
               type="button" 
@@ -301,8 +296,7 @@ const ModalProducto = ({ esEdicion, formData, setFormData, onSubmit, alCerrar })
                 backgroundColor: '#3b475d',
                 color: '#ffffff',
                 cursor: 'pointer',
-                fontWeight: '700',
-                fontSize: '0.88rem'
+                fontWeight: '700'
               }}
             >
               Cancelar
@@ -316,9 +310,7 @@ const ModalProducto = ({ esEdicion, formData, setFormData, onSubmit, alCerrar })
                 backgroundColor: '#0070f3',
                 color: '#ffffff',
                 cursor: 'pointer',
-                fontWeight: '800',
-                fontSize: '0.88rem',
-                boxShadow: '0 0 12px rgba(0, 112, 243, 0.4)'
+                fontWeight: '800'
               }}
             >
               Guardar

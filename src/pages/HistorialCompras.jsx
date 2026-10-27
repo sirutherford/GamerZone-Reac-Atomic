@@ -15,6 +15,7 @@ const HistorialCompras = ({ usuario, irATienda }) => {
         // Obtener datos del usuario logueado
         let miEmail = '';
         let miNombre = '';
+        let miRut = '';
 
         if (typeof usuario === 'string') {
           if (usuario.includes('@')) miEmail = usuario.toLowerCase().trim();
@@ -22,17 +23,24 @@ const HistorialCompras = ({ usuario, irATienda }) => {
         } else if (usuario && typeof usuario === 'object') {
           miEmail = String(usuario.email || '').toLowerCase().trim();
           miNombre = String(usuario.nombre || usuario.usuario || '').toLowerCase().trim();
+          miRut = usuario.rut || '';
         }
 
-        // Si el usuario no tiene correo en el objeto, buscarlo en las cuentas locales
-        if (!miEmail && miNombre) {
-          const uEncontrado = usuariosLocales.find(u => String(u.nombre || '').toLowerCase().trim() === miNombre);
-          if (uEncontrado) miEmail = String(uEncontrado.email || '').toLowerCase().trim();
+        // Buscar al usuario en la base de datos local para obtener su RUT y Email reales
+        const uEncontrado = usuariosLocales.find(u => 
+          (miEmail && String(u.email || '').toLowerCase().trim() === miEmail) ||
+          (miNombre && String(u.nombre || '').toLowerCase().trim() === miNombre)
+        );
+
+        if (uEncontrado) {
+          if (!miEmail) miEmail = String(uEncontrado.email || '').toLowerCase().trim();
+          if (!miNombre) miNombre = String(uEncontrado.nombre || '').toLowerCase().trim();
+          if (!miRut) miRut = uEncontrado.rut || '';
         }
 
-        // AUTO-REPARACIÓN: Vincular boletas creadas bajo nombres o correos anteriores (e.g. Simon Rutherford / simon@gmail.com)
+        // AUTO-REPARACIÓN: Vincular boletas con nombre, email y RUT reales del cliente
         const historialReparado = historialTotal.map(boleta => {
-          const bUser = String(boleta.usuario || '').toLowerCase().trim();
+          const bUser = String(boleta.usuario || boleta.cliente || '').toLowerCase().trim();
           const bEmail = String(boleta.email || boleta.datosEntrega?.email || '').toLowerCase().trim();
 
           const esMismaCuenta = 
@@ -41,10 +49,20 @@ const HistorialCompras = ({ usuario, irATienda }) => {
             (miNombre && bUser === miNombre);
 
           if (esMismaCuenta) {
+            const rutDefinitivo = miRut || boleta.rut || boleta.datosEntrega?.rut || 'Sin R.U.T.';
+            const nombreDefinitivo = typeof usuario === 'object' && usuario.nombre ? usuario.nombre : (uEncontrado?.nombre || boleta.usuario || 'Cliente Registrado');
+
             return {
               ...boleta,
-              email: miEmail || 'simon@gmail.com',
-              usuario: typeof usuario === 'object' ? usuario.nombre : (usuario || 'Juan Toro')
+              email: miEmail || boleta.email || 'simon@gmail.com',
+              usuario: nombreDefinitivo,
+              cliente: nombreDefinitivo,
+              rut: rutDefinitivo,
+              rutCliente: rutDefinitivo,
+              datosEntrega: {
+                ...boleta.datosEntrega,
+                rut: rutDefinitivo
+              }
             };
           }
           return boleta;
@@ -55,7 +73,7 @@ const HistorialCompras = ({ usuario, irATienda }) => {
 
         // Filtrar boletas para el usuario activo
         const misCompras = historialReparado.filter((boleta) => {
-          const bUser = String(boleta.usuario || '').toLowerCase().trim();
+          const bUser = String(boleta.usuario || boleta.cliente || '').toLowerCase().trim();
           const bEmail = String(boleta.email || boleta.datosEntrega?.email || '').toLowerCase().trim();
 
           if (!miEmail && !miNombre) return true;
@@ -75,6 +93,31 @@ const HistorialCompras = ({ usuario, irATienda }) => {
 
     cargarHistorial();
   }, [usuario]);
+
+  // Función para abrir el modal inyectando en tiempo real el RUT correcto
+  const handleAbrirBoleta = (compra) => {
+    const usuariosLocales = JSON.parse(localStorage.getItem('usuariosGamerZone')) || [];
+    
+    let miEmail = typeof usuario === 'object' ? usuario?.email : (typeof usuario === 'string' && usuario.includes('@') ? usuario : '');
+    let miNombre = typeof usuario === 'object' ? usuario?.nombre : (typeof usuario === 'string' && !usuario.includes('@') ? usuario : '');
+    
+    const uEncontrado = usuariosLocales.find(u => 
+      (miEmail && String(u.email || '').toLowerCase().trim() === String(miEmail).toLowerCase().trim()) ||
+      (miNombre && String(u.nombre || '').toLowerCase().trim() === String(miNombre).toLowerCase().trim())
+    );
+
+    const rutReal = (typeof usuario === 'object' && usuario?.rut) || uEncontrado?.rut || compra.rut || compra.datosEntrega?.rut || 'Sin R.U.T.';
+
+    setOrdenSeleccionada({
+      ...compra,
+      rut: rutReal,
+      rutCliente: rutReal,
+      datosEntrega: {
+        ...compra.datosEntrega,
+        rut: rutReal
+      }
+    });
+  };
 
   return (
     <section style={{ backgroundColor: '#f8fafc', padding: '40px 20px', minHeight: '80vh' }}>
@@ -166,7 +209,7 @@ const HistorialCompras = ({ usuario, irATienda }) => {
                   </div>
 
                   <Boton
-                    onClick={() => setOrdenSeleccionada(compra)}
+                    onClick={() => handleAbrirBoleta(compra)}
                     style={{
                       backgroundColor: '#0f172a',
                       color: '#38bdf8',

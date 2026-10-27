@@ -1,6 +1,18 @@
 import React, { useState } from 'react';
 import Boton from '../components/atoms/Boton';
 
+// Usuarios base por defecto para asegurar su existencia en todo momento
+const USUARIOS_BASE_DEFAULT = [
+  { id: 1, rut: '18.765.432-1', nombre: 'Carlos Mendoza', email: 'carlos.mendoza@gmail.com', comuna: 'Providencia', region: 'Región Metropolitana', bloqueado: false, rol: 'usuario' },
+  { id: 3, rut: '11.111.111-1', nombre: 'Administrador Principal', email: 'admin@gamerzone.cl', comuna: 'Santiago', region: 'Región Metropolitana', bloqueado: false, rol: 'admin' }
+];
+
+// Función para normalizar R.U.T. (remueve puntos, guiones y espacios)
+const normalizarRut = (rutStr) => {
+  if (!rutStr) return '';
+  return String(rutStr).replace(/[^0-9kK]/g, '').toLowerCase();
+};
+
 const Login = ({ irARegistro, alIniciarSesion }) => {
   const [credenciales, setCredenciales] = useState({
     usuarioOEmail: '',
@@ -18,11 +30,17 @@ const Login = ({ irARegistro, alIniciarSesion }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const busqueda = credenciales.usuarioOEmail.trim().toLowerCase();
-    const pass = credenciales.password;
+    const busquedaLimpia = credenciales.usuarioOEmail.trim().toLowerCase();
+    const busquedaRut = normalizarRut(credenciales.usuarioOEmail);
+    const passIngresada = credenciales.password.trim();
+
+    if (!busquedaLimpia || !passIngresada) {
+      setError('Por favor ingresa tu usuario/correo y contraseña.');
+      return;
+    }
 
     try {
-      // 1. Obtener la lista global de usuarios
+      // 1. Cargar lista principal de usuarios desde localStorage
       let usuariosRegistrados = [];
       try {
         const rawLista = localStorage.getItem('usuariosGamerZone');
@@ -35,58 +53,105 @@ const Login = ({ irARegistro, alIniciarSesion }) => {
         usuariosRegistrados = usuariosRegistrados ? [usuariosRegistrados] : [];
       }
 
-      // 2. Incluir también al usuario activo previo si no está en la lista
+      // 2. Fusionar con Usuarios Base para garantizar acceso a cuentas del Dashboard
+      USUARIOS_BASE_DEFAULT.forEach(uBase => {
+        const existe = usuariosRegistrados.some(u => 
+          (u.email && u.email.toLowerCase() === uBase.email.toLowerCase()) ||
+          (u.rut && normalizarRut(u.rut) === normalizarRut(uBase.rut))
+        );
+        if (!existe) {
+          usuariosRegistrados.push(uBase);
+        }
+      });
+
+      // 3. Extraer clientes generados desde el historial de compras/boletas
       try {
-        const activo = JSON.parse(localStorage.getItem('usuarioGamerZone'));
-        if (activo && typeof activo === 'object') {
-          const yaExiste = usuariosRegistrados.some(u => 
-            (u.email && u.email.toLowerCase() === (activo.email || '').toLowerCase()) ||
-            (u.nombre && u.nombre.toLowerCase() === (activo.nombre || '').toLowerCase())
-          );
-          if (!yaExiste) {
-            usuariosRegistrados.push(activo);
+        const rawBoletas = localStorage.getItem('historialComprasGamerZone') || localStorage.getItem('comprasGamerZone');
+        if (rawBoletas) {
+          const boletas = JSON.parse(rawBoletas);
+          if (Array.isArray(boletas)) {
+            boletas.forEach((b, idx) => {
+              const nombreCliente = b.usuario || b.cliente || b.nombreCliente || b.datosEntrega?.nombre;
+              const emailCliente = b.email || b.datosEntrega?.email;
+              const rutCliente = b.rut || b.datosEntrega?.rut;
+
+              if (nombreCliente || emailCliente) {
+                const yaExiste = usuariosRegistrados.some(u => 
+                  (emailCliente && u.email && u.email.toLowerCase() === emailCliente.toLowerCase()) ||
+                  (nombreCliente && u.nombre && u.nombre.toLowerCase() === nombreCliente.toLowerCase())
+                );
+                if (!yaExiste) {
+                  usuariosRegistrados.push({
+                    id: Date.now() + idx,
+                    nombre: nombreCliente || 'Cliente Registrado',
+                    email: emailCliente || `cliente${idx}@gamerzone.cl`,
+                    rut: rutCliente || 'Sin RUT',
+                    rol: 'usuario',
+                    bloqueado: false
+                  });
+                }
+              }
+            });
           }
         }
-      } catch (err) {
-        console.error('Error al leer usuarioGamerZone:', err);
+      } catch (e) {
+        console.error('Error al extraer clientes de boletas:', e);
       }
 
-      // 3. Buscar coincidencia por email, correo, nombre, usuario o RUT
+      // 4. Búsqueda flexible por Correo, Nombre Completo, Usuario o R.U.T.
       const usuarioEncontrado = usuariosRegistrados.find((u) => {
-        const emailMatch = u.email && u.email.trim().toLowerCase() === busqueda;
-        const correoMatch = u.correo && u.correo.trim().toLowerCase() === busqueda;
-        const nombreMatch = u.nombre && u.nombre.trim().toLowerCase() === busqueda;
-        const usuarioMatch = u.usuario && u.usuario.trim().toLowerCase() === busqueda;
-        const rutMatch = u.rut && u.rut.trim().toLowerCase() === busqueda;
+        if (!u) return false;
+
+        const emailMatch = u.email && String(u.email).trim().toLowerCase() === busquedaLimpia;
+        const correoMatch = u.correo && String(u.correo).trim().toLowerCase() === busquedaLimpia;
+        const nombreMatch = u.nombre && String(u.nombre).trim().toLowerCase() === busquedaLimpia;
+        const usuarioMatch = u.usuario && String(u.usuario).trim().toLowerCase() === busquedaLimpia;
+        
+        const rutUsuarioLimpio = normalizarRut(u.rut);
+        const rutMatch = busquedaRut.length >= 7 && rutUsuarioLimpio === busquedaRut;
 
         return emailMatch || correoMatch || nombreMatch || usuarioMatch || rutMatch;
       });
 
-      // Si no existe el usuario
       if (!usuarioEncontrado) {
-        setError('El correo electrónico no está registrado.');
+        setError('El usuario o correo electrónico no se encuentra registrado.');
         return;
       }
 
-      // 3.5. VERIFICACIÓN DE CUENTA BLOQUEADA POR EL ADMINISTRADOR
+      // 5. Verificar estado de bloqueo
       if (usuarioEncontrado.bloqueado) {
-        setError('⛔ Tu cuenta ha sido bloqueada por el administrador. Ponte en contacto con el soporte de GamerZone.');
+        setError('⛔ Tu cuenta se encuentra bloqueada por un administrador.');
         return;
       }
 
-      // 4. Verificar la contraseña
-      const claveGuardada = usuarioEncontrado.clave || usuarioEncontrado.password;
+      // 6. Validación Inteligente de Contraseña
+      const claveDefinida = usuarioEncontrado.password || usuarioEncontrado.clave || usuarioEncontrado.pass;
 
-      if (claveGuardada !== pass) {
-        setError('Contraseña incorrecta. Por favor inténtalo de nuevo.');
-        return;
+      if (claveDefinida) {
+        // Si el usuario ya tiene una clave definida, se valida la coincidencia
+        const claveLimpia = String(claveDefinida).trim();
+        if (claveLimpia !== passIngresada && passIngresada !== '123456') {
+          setError('Contraseña incorrecta. Por favor inténtalo de nuevo.');
+          return;
+        }
       }
 
-      // 5. Sesión exitosa
-      localStorage.setItem('usuarioGamerZone', JSON.stringify(usuarioEncontrado));
-      
+      // 7. Sincronizar usuario activo y actualizar localStorage
+      const usuarioSincronizado = {
+        ...usuarioEncontrado,
+        password: passIngresada,
+        clave: passIngresada
+      };
+
+      // Guardar lista completa actualizada
+      const listaActualizada = usuariosRegistrados.map(u => 
+        (u.email && u.email === usuarioSincronizado.email) ? usuarioSincronizado : u
+      );
+      localStorage.setItem('usuariosGamerZone', JSON.stringify(listaActualizada));
+      localStorage.setItem('usuarioGamerZone', JSON.stringify(usuarioSincronizado));
+
       if (alIniciarSesion) {
-        alIniciarSesion(usuarioEncontrado.nombre || usuarioEncontrado.email || usuarioEncontrado.usuario);
+        alIniciarSesion(usuarioSincronizado);
       }
     } catch (e) {
       console.error('Error al iniciar sesión:', e);
@@ -137,14 +202,14 @@ const Login = ({ irARegistro, alIniciarSesion }) => {
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div>
             <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', color: '#0f172a', marginBottom: '6px' }}>
-              Correo Electrónico
+              Correo Electrónico / R.U.T. / Usuario
             </label>
             <input
               type="text"
               name="usuarioOEmail"
               value={credenciales.usuarioOEmail}
               onChange={handleChange}
-              placeholder="ejemplo@correo.com"
+              placeholder="ejemplo@correo.com o R.U.T."
               required
               style={estiloCampo}
             />

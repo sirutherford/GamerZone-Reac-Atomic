@@ -66,7 +66,6 @@ const Registro = ({ irALogin, alRegistrar }) => {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     
-    // Auto-formatear el R.U.T. dinámicamente
     if (name === 'rut') {
       setFormData({
         ...formData,
@@ -116,7 +115,10 @@ const Registro = ({ irALogin, alRegistrar }) => {
       return;
     }
 
+    const passFinal = formData.password.trim();
+
     const nuevoUsuario = {
+      id: Date.now(),
       nombre: formData.nombre.trim(),
       rut: formData.rut.trim(),
       email: formData.email.trim().toLowerCase(),
@@ -124,7 +126,10 @@ const Registro = ({ irALogin, alRegistrar }) => {
       region: formData.region,
       provincia: formData.provincia,
       comuna: formData.comuna,
-      clave: formData.password
+      password: passFinal,
+      clave: passFinal,
+      bloqueado: false,
+      rol: 'usuario'
     };
 
     try {
@@ -149,7 +154,7 @@ const Registro = ({ irALogin, alRegistrar }) => {
       localStorage.setItem('usuarioGamerZone', JSON.stringify(nuevoUsuario));
 
       if (alRegistrar) {
-        alRegistrar(nuevoUsuario.nombre);
+        alRegistrar(nuevoUsuario);
       }
     } catch (err) {
       console.error('Error al guardar registro:', err);
@@ -213,7 +218,7 @@ const Registro = ({ irALogin, alRegistrar }) => {
             />
           </div>
 
-          {/* R.U.T. con validación y formateo automático */}
+          {/* R.U.T. */}
           <div>
             <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', color: '#0f172a', marginBottom: '5px' }}>
               R.U.T.

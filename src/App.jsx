@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 // Organismos
 import Header from './components/organisms/Header';
@@ -21,6 +21,11 @@ import AdminDashboard from './pages/AdminDashboard';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './App.css';
 
+const PRODUCTOS_BASE_DEFAULT = [
+  { id: 1, codigo: 'GZ-0001', titulo: 'The Legend of Zelda: Tears of the Kingdom', categoria: 'Nintendo Switch', precio: 59990, stock: 15, imagen: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=400', descripcion: 'Explora los cielos y las profundidades de Hyrule.' },
+  { id: 2, codigo: 'GZ-0002', titulo: 'God of War Ragnarök', categoria: 'PlayStation 5', precio: 54990, stock: 12, imagen: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=400', descripcion: 'Embárcate en un viaje mítico junto a Kratos.' }
+];
+
 function App() {
   const [carrito, setCarrito] = useState([]);
   const [mostrarCarrito, setMostrarCarrito] = useState(false);
@@ -28,6 +33,18 @@ function App() {
   const [vistaActual, setVistaActual] = useState('home');
   const [seccionActiva, setSeccionActiva] = useState('home');
   
+  // Estado global persistente de Productos
+  const [productos, setProductos] = useState(() => {
+    try {
+      const guardados = localStorage.getItem('productosGamerZone');
+      if (guardados) return JSON.parse(guardados);
+      localStorage.setItem('productosGamerZone', JSON.stringify(PRODUCTOS_BASE_DEFAULT));
+      return PRODUCTOS_BASE_DEFAULT;
+    } catch (e) {
+      return PRODUCTOS_BASE_DEFAULT;
+    }
+  });
+
   // Estado del usuario
   const [usuario, setUsuario] = useState(() => {
     try {
@@ -46,9 +63,16 @@ function App() {
 
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
 
-  // Sincronizar automáticamente el estado del usuario desde localStorage al cambiar de vista
-  useEffect(() => {
+  // Sincronizar catálogo y usuario desde localStorage
+  const sincronizarTodo = useCallback(() => {
     try {
+      // 1. Cargar Productos actualizados
+      const prodsGuardados = localStorage.getItem('productosGamerZone');
+      if (prodsGuardados) {
+        setProductos(JSON.parse(prodsGuardados));
+      }
+
+      // 2. Cargar Usuario actualizado
       const sesionRaw = localStorage.getItem('usuarioGamerZone');
       const esAdminAuth = localStorage.getItem('adminAutenticadoGamerZone') === 'true';
 
@@ -71,11 +95,20 @@ function App() {
           rol: 'admin',
           esAdmin: true
         });
+      } else {
+        setUsuario(null);
       }
     } catch (e) {
-      console.error('Error al sincronizar sesión:', e);
+      console.error('Error al sincronizar estado global:', e);
     }
-  }, [vistaActual]);
+  }, []);
+
+  useEffect(() => {
+    sincronizarTodo();
+
+    window.addEventListener('storage', sincronizarTodo);
+    return () => window.removeEventListener('storage', sincronizarTodo);
+  }, [vistaActual, sincronizarTodo]);
 
   // Verificación global de Administrador
   const rolActual = (usuario?.rol || usuario?.role || usuario?.tipo || '').toLowerCase();
@@ -119,7 +152,7 @@ function App() {
     if (carrito.length === 0) return;
 
     try {
-      let productosActuales = [];
+      let productosActuales = productos;
       const guardados = localStorage.getItem('productosGamerZone');
       if (guardados) {
         productosActuales = JSON.parse(guardados);
@@ -136,6 +169,7 @@ function App() {
       });
 
       localStorage.setItem('productosGamerZone', JSON.stringify(productosActualizados));
+      setProductos(productosActualizados);
 
       const totalPagar = carrito.reduce((sum, item) => {
         const precioNum = typeof item.precio === 'number'
@@ -144,7 +178,6 @@ function App() {
         return sum + (precioNum * item.cantidad);
       }, 0);
 
-      // Estructura oficial de la boleta vinculada con RUT y Email
       const nuevaBoleta = {
         numBoleta: Math.floor(100000 + Math.random() * 900000),
         fecha: new Date().toLocaleDateString('es-CL'),
@@ -169,6 +202,7 @@ function App() {
   };
 
   const handleIngresarAdmin = () => {
+    sincronizarTodo();
     setVistaActual('admin');
     setSeccionActiva('admin');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -179,7 +213,6 @@ function App() {
       ? datosUsuario 
       : { nombre: datosUsuario, email: datosUsuario };
 
-    // Cruzar información con la base de datos local
     const posiblesClaves = ['usuariosGamerZone', 'usuarios', 'users', 'cuentas'];
     for (let clave of posiblesClaves) {
       const dataLocal = localStorage.getItem(clave);
@@ -211,6 +244,7 @@ function App() {
     localStorage.setItem('usuarioGamerZone', JSON.stringify(objetoUsuario));
 
     if (esAdminDetectado) {
+      sincronizarTodo();
       setVistaActual('admin');
       setSeccionActiva('admin');
     } else {
@@ -222,10 +256,12 @@ function App() {
     setUsuario(null);
     localStorage.removeItem('usuarioGamerZone');
     localStorage.removeItem('adminAutenticadoGamerZone');
+    sincronizarTodo();
     navegarA('home');
   };
 
   const navegarA = (nuevaVista, idSeccion = null) => {
+    sincronizarTodo();
     setVistaActual(nuevaVista);
     setSeccionActiva(idSeccion || nuevaVista);
 
@@ -299,7 +335,7 @@ function App() {
         {vistaActual === 'productos' ? (
           <div style={{ paddingTop: '20px' }}>
             <Productos 
-              key={`productos-${vistaActual}`}
+              productos={productos}
               agregarAlCarrito={agregarAlCarrito} 
               verDetalle={handleVerDetalle}
             />
@@ -316,7 +352,6 @@ function App() {
           </div>
         ) : vistaActual === 'historial' ? (
           <div style={{ paddingTop: '20px' }}>
-            {/* Se envía la sesión completa 'usuario' para filtro por R.U.T. e Email */}
             <HistorialCompras 
               usuario={usuario}
               irATienda={() => navegarA('productos')}
@@ -343,7 +378,7 @@ function App() {
           <>
             <Hero />
             <Productos 
-              key={`home-${vistaActual}`}
+              productos={productos}
               limite={5} 
               agregarAlCarrito={agregarAlCarrito} 
               verCatalogoCompleto={() => navegarA('productos')}

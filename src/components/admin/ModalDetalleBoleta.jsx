@@ -3,22 +3,50 @@ import React from 'react';
 const ModalDetalleBoleta = ({ orden, alCerrar, alCerrarX }) => {
   if (!orden) return null;
 
-  const rutCliente = orden.rut || orden.rutCliente || orden.datosEntrega?.rut || 'Sin R.U.T.';
-  const emailCliente = orden.email || orden.datosEntrega?.email || 'N/A';
-  
+  // Cargar lista de usuarios y sesión para la vinculación automática del RUT real
+  const usuariosLocales = JSON.parse(localStorage.getItem('usuariosGamerZone') || '[]');
+  const usuarioSesion = JSON.parse(localStorage.getItem('usuarioGamerZone') || localStorage.getItem('usuarioSesionGamerZone') || '{}');
+
+  const emailCliente = orden.email || orden.datosEntrega?.email || usuarioSesion.email || 'N/A';
+  const nombreCliente = orden.usuario || orden.cliente || orden.datosEntrega?.nombre || usuarioSesion.nombre || 'Anónimo';
+
+  // Buscar la cuenta del cliente en la lista de registrados
+  const usuarioEncontrado = usuariosLocales.find(u => 
+    (emailCliente !== 'N/A' && String(u.email || '').toLowerCase().trim() === String(emailCliente).toLowerCase().trim()) ||
+    (nombreCliente !== 'Anónimo' && String(u.nombre || '').toLowerCase().trim() === String(nombreCliente).toLowerCase().trim()) ||
+    (nombreCliente !== 'Anónimo' && String(u.nombre || '').toLowerCase().includes(String(nombreCliente).toLowerCase()))
+  );
+
+  // RESOLUCIÓN DE RUT REAL: Prioriza el RUT del cliente sobre el RUT genérico de orden ("11.111.111-1")
+  let rutCliente = 'Sin R.U.T.';
+  if (usuarioEncontrado && usuarioEncontrado.rut) {
+    rutCliente = usuarioEncontrado.rut;
+  } else if (usuarioSesion && usuarioSesion.rut) {
+    rutCliente = usuarioSesion.rut;
+  } else if (orden.rut && orden.rut !== '11.111.111-1') {
+    rutCliente = orden.rut;
+  } else if (orden.datosEntrega?.rut && orden.datosEntrega.rut !== '11.111.111-1') {
+    rutCliente = orden.datosEntrega.rut;
+  } else if (orden.rut) {
+    rutCliente = orden.rut;
+  }
+
+  // Compatibilidad de productos para cualquier estructura (productos, items o carrito)
+  const listaProductos = orden.productos || orden.items || orden.carrito || [];
+
   const direccionCliente = (orden.datosEntrega && typeof orden.datosEntrega === 'object') 
-    ? `${orden.datosEntrega.direccion || ''}, ${orden.datosEntrega.comuna || ''}` 
-    : 'Retiro en Tienda';
+    ? `${orden.datosEntrega.direccion || ''}${orden.datosEntrega.comuna ? ', ' + orden.datosEntrega.comuna : ''}` 
+    : (orden.direccion || 'Retiro en Tienda');
 
   const totalBruto = typeof orden.total === 'number' 
     ? orden.total 
-    : parseInt(String(orden.total || 0).replace(/[^0-9]/g, ''), 10) || 0;
+    : (typeof orden.montoTotal === 'number' ? orden.montoTotal : parseInt(String(orden.total || orden.montoTotal || 0).replace(/\D/g, ''), 10) || 0);
 
   const montoNeto = Math.round(totalBruto / 1.19);
   const montoIVA = totalBruto - montoNeto;
-  const numBoleta = orden.numBoleta || '161906';
+  const numBoleta = orden.numBoleta || orden.idBoleta || orden.id || '161906';
 
-  // Plantilla HTML con el diseño exacto del S.I.I.
+  // Plantilla HTML con el formato exacto del S.I.I. para impresión/descarga
   const generarPlantillaHTML = () => `
     <!DOCTYPE html>
     <html lang="es">
@@ -77,8 +105,8 @@ const ModalDetalleBoleta = ({ orden, alCerrar, alCerrarX }) => {
 
         <div class="cliente-info">
           <div>
-            <p><strong>Cliente:</strong> ${orden.usuario || orden.cliente || 'Anónimo'}</p>
-            <p><strong>Fecha Emisión:</strong> ${orden.fecha || 'N/A'}</p>
+            <p><strong>Cliente:</strong> ${nombreCliente}</p>
+            <p><strong>Fecha Emisión:</strong> ${orden.fecha || orden.fechaCompra || 'N/A'}</p>
             <p><strong>Dirección de Entrega:</strong> ${direccionCliente}</p>
           </div>
           <div>
@@ -98,8 +126,8 @@ const ModalDetalleBoleta = ({ orden, alCerrar, alCerrarX }) => {
             </tr>
           </thead>
           <tbody>
-            ${(orden.productos || []).map((p, i) => {
-              const precioNum = typeof p.precio === 'number' ? p.precio : parseInt(String(p.precio || 0).replace(/[^0-9]/g, ''), 10) || 0;
+            ${listaProductos.map((p, i) => {
+              const precioNum = typeof p.precio === 'number' ? p.precio : parseInt(String(p.precio || 0).replace(/\D/g, ''), 10) || 0;
               const cantidad = p.cantidad || 1;
               const codigoProd = p.codigo || `GZ-00${i + 1}`;
               return `
@@ -107,7 +135,8 @@ const ModalDetalleBoleta = ({ orden, alCerrar, alCerrarX }) => {
                   <td class="codigo">${codigoProd}</td>
                   <td class="bold">${p.titulo || p.nombre}</td>
                   <td class="center">${cantidad}</td>
-                  <td class="right">$${precioNum.toLocaleString('es-CL')}</td> <td class="right bold">$${(precioNum * cantidad).toLocaleString('es-CL')}</td>
+                  <td class="right">$${precioNum.toLocaleString('es-CL')}</td>
+                  <td class="right bold">$${(precioNum * cantidad).toLocaleString('es-CL')}</td>
                 </tr>
               `;
             }).join('')}
@@ -165,16 +194,16 @@ const ModalDetalleBoleta = ({ orden, alCerrar, alCerrarX }) => {
         </div>
         
         <div style={{ margin: '16px 0', fontSize: '0.88rem', color: '#cbd5e1', display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'center' }}>
-          <div><strong>Fecha:</strong> {orden.fecha || 'N/A'}</div>
-          <div><strong>Cliente:</strong> {orden.usuario || orden.cliente || 'Anónimo'}</div>
+          <div><strong>Fecha:</strong> {orden.fecha || orden.fechaCompra || 'N/A'}</div>
+          <div><strong>Cliente:</strong> {nombreCliente}</div>
           <div><strong>R.U.T. Cliente:</strong> <span style={{ color: '#38bdf8', fontWeight: '700' }}>{rutCliente}</span></div>
           {emailCliente !== 'N/A' && <div><strong>Correo:</strong> {emailCliente}</div>}
         </div>
 
         <h4 style={{ margin: '14px 0 8px 0', fontSize: '0.95rem', color: '#38bdf8', textAlign: 'center' }}>Detalle Resumido:</h4>
         <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '0.88rem', borderTop: '1px solid #334155', maxHeight: '180px', overflowY: 'auto' }}>
-          {(orden.productos || []).map((p, i) => {
-            const precioNum = typeof p.precio === 'number' ? p.precio : parseInt(String(p.precio || 0).replace(/[^0-9]/g, ''), 10) || 0;
+          {listaProductos.map((p, i) => {
+            const precioNum = typeof p.precio === 'number' ? p.precio : parseInt(String(p.precio || 0).replace(/\D/g, ''), 10) || 0;
             const subtotal = precioNum * (p.cantidad || 1);
             return (
               <li key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #334155' }}>
